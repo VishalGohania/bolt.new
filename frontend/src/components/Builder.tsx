@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Code, Eye, Loader, Menu, X } from 'lucide-react';
+import { ArrowLeft, Code, Eye, Loader, Menu, X, Download } from 'lucide-react';
 import { FileExplorer } from './FileExplorer';
 import { StepsPanel } from './StepsPanel';
 import { CodeEditor } from './CodeEditor';
@@ -9,6 +9,7 @@ import axios from 'axios';
 import { BACKEND_URL } from '../config';
 import { parseXml } from '../steps';
 import { useWebContainer } from '../hooks/useWebContainer';
+import { downloadProjectFiles } from '../utils/downloadUtils';
 
 interface BuilderInterfaceProps {
   prompt: string;
@@ -267,6 +268,10 @@ export const Builder: React.FC<BuilderInterfaceProps> = ({
     }
   };
 
+  const handleDownload = () => {
+    downloadProjectFiles(files, prompt);
+  };
+
   return (
     <div className="h-screen bg-[#0a0a0a] text-white flex flex-col">
       {/* Header */}
@@ -300,6 +305,19 @@ export const Builder: React.FC<BuilderInterfaceProps> = ({
 
             {/* Tab Switcher */}
             <div className="flex bg-gray-800/50 rounded-lg p-0.5">
+              <button
+                onClick={handleDownload}
+                disabled={files.length === 0}
+                className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1.5 rounded-md text-sm transition-all mr-1 ${
+                  files.length === 0 
+                    ? "text-gray-600 cursor-not-allowed" 
+                    : "text-gray-400 hover:text-white hover:bg-gray-700/50"
+                }`}
+                title="Download project files"
+              >
+                <Download className="w-4 h-4" />
+                <span className="hidden sm:inline">Download</span>
+              </button>
               <button
                 onClick={() => setActiveTab("code")}
                 className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1.5 rounded-md text-sm transition-all ${activeTab === "code" ? "bg-blue-600 text-white shadow-sm" : "text-gray-400 hover:text-white hover:bg-gray-700/50"
