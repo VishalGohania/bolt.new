@@ -1,0 +1,1 @@
+export const basePrompt = `<boltArtifact id="project-import" title="Project Files">
