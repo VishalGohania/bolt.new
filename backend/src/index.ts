@@ -1,5 +1,5 @@
 require("dotenv").config();
-import express, { Request , Response } from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { BASE_PROMPT, getSystemPrompt } from './prompts';
@@ -22,14 +22,14 @@ app.use(express.json())
 
 const PORT = process.env.PORT || 3000;
 
-app.post('/template', async function(req: Request, res: Response): Promise<void>{
-  const {prompt} = req.body;
+app.post('/template', async function (req: Request, res: Response): Promise<void> {
+  const { prompt } = req.body;
   console.log("Sending prompt:", prompt);
   try {
     const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
-    systemInstruction: "You are a classifier. You must respond with only one word: either 'react' or 'node', based on the user's prompt. Respond only with the word. No explanation, no punctuation.",
-  });
+      model: "gemini-2.5-pro",
+      systemInstruction: "You are a classifier. You must respond with only one word: either 'react' or 'node', based on the user's prompt. Respond only with the word. No explanation, no punctuation.",
+    });
 
     const result = await model.generateContent(prompt);
     const response = result.response;
@@ -42,51 +42,51 @@ app.post('/template', async function(req: Request, res: Response): Promise<void>
     const answer = answerRaw.trim().toLowerCase();
 
     if (!answer) {
-        res.status(403).json({
+      res.status(403).json({
         message: "Could not determine project type. AI returned an empty response.",
       });
       return;
     }
 
 
-  if(answer.includes('react')) {
-    res.json({
-      prompts: [BASE_PROMPT, `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`],
-      uiPrompts: [[reactBasePrompt]]
-    });
-    return;
-  } 
-  if (answer.includes('node')) {
-    res.json({
-      prompts: [`Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${nodeBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`],
-      uiPrompts: [[nodeBasePrompt]]
-    });
-    return;
-  } 
-  
-  res.status(403).json({message: "Could not determine project type. AI responded with: " + answer});
+    if (answer.includes('react')) {
+      res.json({
+        prompts: [BASE_PROMPT, `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`],
+        uiPrompts: [[reactBasePrompt]]
+      });
+      return;
+    }
+    if (answer.includes('node')) {
+      res.json({
+        prompts: [`Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${nodeBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`],
+        uiPrompts: [[nodeBasePrompt]]
+      });
+      return;
+    }
 
-  return;
-} catch (error: any) {
+    res.status(403).json({ message: "Could not determine project type. AI responded with: " + answer });
+
+    return;
+  } catch (error: any) {
     console.error("Error calling Gemini API:", error.message, error?.response?.data);
     res.status(500).json({ message: "Internal server error" });
   }
 })
-  
+
 
 app.post("/chat", async function (req, res): Promise<void> {
-  const {messages} = req.body;
+  const { messages } = req.body;
 
   try {
     const model = await genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
-    systemInstruction: getSystemPrompt(),
-  })
-   const chat = model.startChat({
-      history: messages.map((msg: { role: string, content: string}) => ({
+      model: "gemini-2.5-flash",
+      systemInstruction: getSystemPrompt(),
+    })
+    const chat = model.startChat({
+      history: messages.map((msg: { role: string, content: string }) => ({
         role: msg.role,
-        parts: [{text: msg.content}],
-      })), 
+        parts: [{ text: msg.content }],
+      })),
       generationConfig: {
         maxOutputTokens: 8000,
       },
@@ -99,7 +99,7 @@ app.post("/chat", async function (req, res): Promise<void> {
 
     res.json({ response: text });
 
-  } catch (error:any) {
+  } catch (error: any) {
     console.error("Error calling Gemini API:", error.message, error?.response?.data);
     res.status(500).json({ message: "Internal Server Error" });
   }

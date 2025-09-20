@@ -2,6 +2,65 @@ import { FileNode, Step } from '../types';
 
 export const mockFileStructure: FileNode[] = [
   {
+    name: 'main.tsx',
+    type: 'file',
+    path: '/src/main.tsx',
+    content: `import React from 'react'
+  import ReactDOM from 'react-dom/client'
+  import App from './App'
+  import './index.css'
+  
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+  )`
+  },
+  {
+    name: 'index.css',
+    type: 'file',
+    path: '/src/index.css',
+    content: `@tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+  
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }`
+  },
+  {
+    name: 'tailwind.config.js',
+    type: 'file',
+    path: '/tailwind.config.js',
+    content: `/** @type {import('tailwindcss').Config} */
+  export default {
+    content: [
+      "./index.html",
+      "./src/**/*.{js,ts,jsx,tsx}",
+    ],
+    theme: {
+      extend: {},
+    },
+    plugins: [],
+  }`
+  },
+  {
+    name: 'vite.config.js',
+    type: 'file',
+    path: '/vite.config.js',
+    content: `import { defineConfig } from 'vite'
+  import react from '@vitejs/plugin-react'
+  
+  export default defineConfig({
+    plugins: [react()],
+  })`
+  },
+  {
     name: 'src',
     type: 'folder',
     path: '/src',

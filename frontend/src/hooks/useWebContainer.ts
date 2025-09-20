@@ -13,6 +13,7 @@ export function useWebContainer() {
         hasBooted.current = true;
         webcontainerInstance = await WebContainer.boot();
         setWebcontainer(webcontainerInstance);
+
       } else if (webcontainerInstance) {
         setWebcontainer(webcontainerInstance);
       }
