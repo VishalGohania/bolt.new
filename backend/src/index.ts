@@ -22,6 +22,16 @@ app.use(express.json())
 
 const PORT = process.env.PORT || 3000;
 
+app.get('/', (req: Request, res: Response) => {
+  res.json({
+    message: "Bolt Backend API is running!",
+    endpoints: {
+      template: "POST /template",
+      chat: "POST /chat"
+    }
+  });
+});
+
 app.post('/template', async function (req: Request, res: Response): Promise<void> {
   const { prompt } = req.body;
   console.log("Sending prompt:", prompt);
